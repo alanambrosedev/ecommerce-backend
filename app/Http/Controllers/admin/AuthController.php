@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Validator;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -14,13 +14,13 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'status' => 400,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ]);
         }
 
@@ -28,16 +28,24 @@ class AuthController extends Controller
             $user = User::find(Auth::user()->id);
 
             if ($user->role == 'admin') {
+                $token = $user->createToken('token')->plainTextToken;
+
+                return response()->json([
+                    'status' => 200,
+                    'token' => $token,
+                    'id' => $user->id,
+                    'name' => $user->name,
+                ]);
             } else {
                 return response()->json([
                     'status' => 401,
-                    'message' => "UnAuthorised access."
+                    'message' => 'UnAuthorised access.',
                 ]);
             }
         } else {
             return response()->json([
                 'status' => 401,
-                'message' => 'Invalid credentials.'
+                'message' => 'Invalid credentials.',
             ]);
         }
     }
