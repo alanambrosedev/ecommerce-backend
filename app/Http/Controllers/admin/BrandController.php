@@ -3,21 +3,21 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
+use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class CategoryController extends Controller
+class BrandController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $categories = Category::orderBy('created_at', 'desc')->get();
+        $brands = Brand::orderBy('created_at', 'desc')->get();
         return response()->json([
             'status' => 200,
-            'data' => $categories
+            'data' => $brands
         ]);
     }
 
@@ -36,15 +36,15 @@ class CategoryController extends Controller
             ], 400);
         }
 
-        $category = new Category();
-        $category->name = $request->name;
-        $category->status =  1;
-        $category->save();
+        $brand = new Brand();
+        $brand->name = $request->name;
+        $brand->status =  1;
+        $brand->save();
 
         return response()->json([
             'status' => 200,
-            'message' => 'Category added successfully.',
-            'data' => $category
+            'message' => 'Brand added successfully.',
+            'data' => $brand
         ]);
     }
 
@@ -53,19 +53,19 @@ class CategoryController extends Controller
      */
     public function show(string $id)
     {
-        $category = Category::find($id);
+        $brand = Brand::find($id);
 
-        if ($category == null) {
+        if ($brand == null) {
             return response()->json([
                 'status' =>  404,
-                'message' => "Category not found.",
+                'message' => "Brand not found.",
                 'data' => []
             ], 404);
         }
 
         return response()->json([
             'status' => 200,
-            'data' => $category
+            'data' => $brand
         ]);
     }
 
@@ -83,24 +83,24 @@ class CategoryController extends Controller
                 'errors' => $validator->errors()
             ], 400);
         }
-        $category = Category::find($id);
+        $brand = Brand::find($id);
 
-        if ($category == null) {
+        if ($brand == null) {
             return response()->json([
                 'status' =>  404,
-                'message' => "Category not found.",
+                'message' => "Brand not found.",
                 'data' => []
             ], 404);
         }
 
-        $category->name = $request->name;
-        $category->status =  1;
-        $category->save();
+        $brand->name = $request->name;
+        $brand->status =  1;
+        $brand->save();
 
         return response()->json([
             'status' => 200,
-            'message' => 'Category updated successfully.',
-            'data' => $category
+            'message' => 'Brand updated successfully.',
+            'data' => $brand
         ]);
     }
 
@@ -109,21 +109,21 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        $category = Category::find($id);
+        $brand = Brand::find($id);
 
-        if ($category == null) {
+        if ($brand == null) {
             return response()->json([
                 'status' =>  404,
-                'message' => "Category not found.",
+                'message' => "Brand not found.",
                 'data' => []
             ], 404);
         }
 
-        $category->delete();
+        $brand->delete();
 
         return response()->json([
             'status' => 200,
-            'message' => "Category deleted successfully."
+            'message' => "Brand deleted successfully."
         ]);
     }
 }
