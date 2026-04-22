@@ -15,9 +15,10 @@ class BrandController extends Controller
     public function index()
     {
         $brands = Brand::orderBy('created_at', 'desc')->get();
+
         return response()->json([
             'status' => 200,
-            'data' => $brands
+            'data' => $brands,
         ]);
     }
 
@@ -32,19 +33,19 @@ class BrandController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 400,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 400);
         }
 
-        $brand = new Brand();
+        $brand = new Brand;
         $brand->name = $request->name;
-        $brand->status =  1;
+        $brand->status = 1;
         $brand->save();
 
         return response()->json([
             'status' => 200,
             'message' => 'Brand added successfully.',
-            'data' => $brand
+            'data' => $brand,
         ]);
     }
 
@@ -57,15 +58,15 @@ class BrandController extends Controller
 
         if ($brand == null) {
             return response()->json([
-                'status' =>  404,
-                'message' => "Brand not found.",
-                'data' => []
+                'status' => 404,
+                'message' => 'Brand not found.',
+                'data' => [],
             ], 404);
         }
 
         return response()->json([
             'status' => 200,
-            'data' => $brand
+            'data' => $brand,
         ]);
     }
 
@@ -80,27 +81,27 @@ class BrandController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 400,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 400);
         }
         $brand = Brand::find($id);
 
         if ($brand == null) {
             return response()->json([
-                'status' =>  404,
-                'message' => "Brand not found.",
-                'data' => []
+                'status' => 404,
+                'message' => 'Brand not found.',
+                'data' => [],
             ], 404);
         }
 
         $brand->name = $request->name;
-        $brand->status =  1;
+        $brand->status = 1;
         $brand->save();
 
         return response()->json([
             'status' => 200,
             'message' => 'Brand updated successfully.',
-            'data' => $brand
+            'data' => $brand,
         ]);
     }
 
@@ -113,9 +114,9 @@ class BrandController extends Controller
 
         if ($brand == null) {
             return response()->json([
-                'status' =>  404,
-                'message' => "Brand not found.",
-                'data' => []
+                'status' => 404,
+                'message' => 'Brand not found.',
+                'data' => [],
             ], 404);
         }
 
@@ -123,7 +124,7 @@ class BrandController extends Controller
 
         return response()->json([
             'status' => 200,
-            'message' => "Brand deleted successfully."
+            'message' => 'Brand deleted successfully.',
         ]);
     }
 }
