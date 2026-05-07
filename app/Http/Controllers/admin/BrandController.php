@@ -29,7 +29,7 @@ class BrandController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'status' => 'required'
+            'status' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -78,7 +78,7 @@ class BrandController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'status' => 'required'
+            'status' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json([
