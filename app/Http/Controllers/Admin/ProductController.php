@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -67,7 +68,18 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $product = Product::find($id);
+        if ($product == null) {
+            return response()->json([
+                'status' => 404,
+                'message' => "The product not found."
+            ]);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data' => $product
+        ]);
     }
 
     /**
@@ -75,7 +87,45 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'price' => 'required|numeric',
+            'category_id' => 'required|numeric',
+            'sku' => ['required', Rule::unique('products', 'sku')->ignore($id)],
+            'is_featured' => 'required',
+            'status' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+
+        $product = Product::find($id);
+        if ($product == null) {
+            return response()->json([
+                'status' => 404,
+                'message' => "The product not found."
+            ]);
+        }
+        $product->title = $request->title;
+        $product->price = $request->price;
+        $product->compare_price = $request->compare_price;
+        $product->category_id = $request->category_id;
+        $product->brand_id = $request->brand_id;
+        $product->sku = $request->sku;
+        $product->description = $request->description;
+        $product->short_description = $request->short_description;
+        $product->status = $request->status;
+        $product->is_featured = $request->is_featured;
+        $product->bar_code = $request->bar_code;
+        $product->save();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Product updated successfully.',
+        ]);
     }
 
     /**
@@ -83,6 +133,19 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $product = Product::find($id);
+        if ($product == null) {
+            return response()->json([
+                'status' => 404,
+                'message' => "The product not found."
+            ]);
+        }
+
+        $product->delete();
+
+        return response()->json([
+            'status' => 200,
+            'message' => "Product deleted successfully."
+        ]);
     }
 }
