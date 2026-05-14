@@ -60,26 +60,44 @@ class ProductController extends Controller
         $product->bar_code = $request->bar_code;
         $product->save();
 
-        if (! empty($request->gallery)) {
-            foreach ($request->gallery as $key => $tempImageId) {
-                $tempImage = TempImage::find($tempImageId);
-                $extArray = explode('.', $tempImage->name);
-                $ext = end($extArray);
-                $imageName = $product->id . '-' . time() . '.' . $ext;
+        foreach ($request->gallery as $key => $tempImageId) {
+
+            $tempImage = TempImage::find($tempImageId);
+
+            if (! $tempImage) {
+                continue;
+            }
+
+            $path = public_path('uploads/temp/'.$tempImage->name);
+
+            if (! file_exists($path)) {
+                continue;
+            }
+
+            try {
+                $ext = pathinfo($tempImage->name, PATHINFO_EXTENSION);
+                $imageName = $product->id.'-'.time().'.'.$ext;
+
                 $manager = new ImageManager(new Driver);
-                $image = $manager->read(public_path('uploads/temp/' . $tempImage->name));
+
+                // LARGE
+                $image = $manager->read($path);
                 $image->scaleDown(400, 460);
-                $image->save(public_path('uploads/products/large/' . $imageName));
+                $image->save(public_path('uploads/products/large/'.$imageName));
 
-                $manager = new ImageManager(new Driver);
-                $image = $manager->read(public_path('uploads/temp/' . $tempImage->name));
+                // SMALL
+                $image = $manager->read($path);
                 $image->coverDown(400, 460);
-                $image->save(public_path('uploads/products/small/' . $imageName));
+                $image->save(public_path('uploads/products/small/'.$imageName));
 
-                if ($key == 0) {
+                if (empty($product->image)) {
                     $product->image = $imageName;
                     $product->save();
                 }
+            } catch (\Exception $e) {
+                \Log::error('Image processing failed: '.$e->getMessage());
+
+                continue;
             }
         }
 
