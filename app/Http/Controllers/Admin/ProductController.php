@@ -36,6 +36,7 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'category_id' => 'required|numeric',
             'sku' => 'required|unique:products,sku',
+            'qty' => 'required',
             'is_featured' => 'required',
             'status' => 'required|numeric',
         ]);
@@ -57,6 +58,7 @@ class ProductController extends Controller
         $product->short_description = $request->short_description;
         $product->status = $request->status;
         $product->is_featured = $request->is_featured;
+        $product->qty = $request->qty;
         $product->bar_code = $request->bar_code;
         $product->save();
 
@@ -68,7 +70,7 @@ class ProductController extends Controller
                 continue;
             }
 
-            $path = public_path('uploads/temp/'.$tempImage->name);
+            $path = public_path('uploads/temp/' . $tempImage->name);
 
             if (! file_exists($path)) {
                 continue;
@@ -76,26 +78,26 @@ class ProductController extends Controller
 
             try {
                 $ext = pathinfo($tempImage->name, PATHINFO_EXTENSION);
-                $imageName = $product->id.'-'.time().'.'.$ext;
+                $imageName = $product->id . '-' . time() . '.' . $ext;
 
                 $manager = new ImageManager(new Driver);
 
                 // LARGE
                 $image = $manager->read($path);
                 $image->scaleDown(400, 460);
-                $image->save(public_path('uploads/products/large/'.$imageName));
+                $image->save(public_path('uploads/products/large/' . $imageName));
 
                 // SMALL
                 $image = $manager->read($path);
                 $image->coverDown(400, 460);
-                $image->save(public_path('uploads/products/small/'.$imageName));
+                $image->save(public_path('uploads/products/small/' . $imageName));
 
                 if (empty($product->image)) {
                     $product->image = $imageName;
                     $product->save();
                 }
             } catch (\Exception $e) {
-                \Log::error('Image processing failed: '.$e->getMessage());
+                \Log::error('Image processing failed: ' . $e->getMessage());
 
                 continue;
             }
@@ -137,6 +139,7 @@ class ProductController extends Controller
             'category_id' => 'required|numeric',
             'sku' => ['required', Rule::unique('products', 'sku')->ignore($id)],
             'is_featured' => 'required',
+            'qty' => 'required',
             'status' => 'required|numeric',
         ]);
         if ($validator->fails()) {
@@ -162,6 +165,7 @@ class ProductController extends Controller
         $product->description = $request->description;
         $product->short_description = $request->short_description;
         $product->status = $request->status;
+        $product->qty = $request->qty;
         $product->is_featured = $request->is_featured;
         $product->bar_code = $request->bar_code;
         $product->save();
