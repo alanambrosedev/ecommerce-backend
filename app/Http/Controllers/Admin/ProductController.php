@@ -34,7 +34,7 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'price' => 'required|numeric',
-            'category_id' => 'required|numeric',
+            'category' => 'required|numeric',
             'sku' => 'required|unique:products,sku',
             'qty' => 'required',
             'is_featured' => 'required',
@@ -51,8 +51,8 @@ class ProductController extends Controller
         $product->title = $request->title;
         $product->price = $request->price;
         $product->compare_price = $request->compare_price;
-        $product->category_id = $request->category_id;
-        $product->brand_id = $request->brand_id;
+        $product->category_id = $request->category;
+        $product->brand_id = $request->brand;
         $product->sku = $request->sku;
         $product->description = $request->description;
         $product->short_description = $request->short_description;
@@ -61,48 +61,48 @@ class ProductController extends Controller
         $product->qty = $request->qty;
         $product->bar_code = $request->bar_code;
         $product->save();
+        if ($request->has('gallery') && is_array($request->gallery)) {
+            foreach ($request->gallery as $key => $tempImageId) {
 
-        foreach ($request->gallery as $key => $tempImageId) {
+                $tempImage = TempImage::find($tempImageId);
 
-            $tempImage = TempImage::find($tempImageId);
-
-            if (! $tempImage) {
-                continue;
-            }
-
-            $path = public_path('uploads/temp/' . $tempImage->name);
-
-            if (! file_exists($path)) {
-                continue;
-            }
-
-            try {
-                $ext = pathinfo($tempImage->name, PATHINFO_EXTENSION);
-                $imageName = $product->id . '-' . time() . '.' . $ext;
-
-                $manager = new ImageManager(new Driver);
-
-                // LARGE
-                $image = $manager->read($path);
-                $image->scaleDown(400, 460);
-                $image->save(public_path('uploads/products/large/' . $imageName));
-
-                // SMALL
-                $image = $manager->read($path);
-                $image->coverDown(400, 460);
-                $image->save(public_path('uploads/products/small/' . $imageName));
-
-                if (empty($product->image)) {
-                    $product->image = $imageName;
-                    $product->save();
+                if (! $tempImage) {
+                    continue;
                 }
-            } catch (\Exception $e) {
-                \Log::error('Image processing failed: ' . $e->getMessage());
 
-                continue;
+                $path = public_path('uploads/temp/' . $tempImage->name);
+
+                if (! file_exists($path)) {
+                    continue;
+                }
+
+                try {
+                    $ext = pathinfo($tempImage->name, PATHINFO_EXTENSION);
+                    $imageName = $product->id . '-' . time() . '.' . $ext;
+
+                    $manager = new ImageManager(new Driver);
+
+                    // LARGE
+                    $image = $manager->read($path);
+                    $image->scaleDown(400, 460);
+                    $image->save(public_path('uploads/products/large/' . $imageName));
+
+                    // SMALL
+                    $image = $manager->read($path);
+                    $image->coverDown(400, 460);
+                    $image->save(public_path('uploads/products/small/' . $imageName));
+
+                    if (empty($product->image)) {
+                        $product->image = $imageName;
+                        $product->save();
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Image processing failed: ' . $e->getMessage());
+
+                    continue;
+                }
             }
         }
-
         return response()->json([
             'status' => 201,
             'message' => 'Product created successfully.',
