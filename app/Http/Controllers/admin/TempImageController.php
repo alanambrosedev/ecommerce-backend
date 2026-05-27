@@ -39,7 +39,6 @@ class TempImageController extends Controller
         $image = $manager->read(public_path('uploads/temp/' . $imageName));
         $image->coverDown(400, 450);
         $image->save(public_path('uploads/thumb/' . $imageName));
-
         return response()->json([
             'status' => 201,
             'message' => 'Image has been uploaded successfully',

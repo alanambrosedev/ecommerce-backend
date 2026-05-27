@@ -10,7 +10,7 @@ class TempImage extends Model
 
     public function getImageUrlAttribute()
     {
-        if ($this->name = "") {
+        if (!$this->name) {
             return "";
         }
 
