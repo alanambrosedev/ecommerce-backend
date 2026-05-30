@@ -16,4 +16,5 @@ Route::group(['middleware:auth:santum'], function () {
     Route::get('/sizes', [SizeController::class, 'index']);
     Route::apiResource('/products', ProductController::class);
     Route::post('/temp-images', [TempImageController::class, 'store']);
+    Route::post('/save-product-image', [ProductController::class, 'saveProductImages']);
 });

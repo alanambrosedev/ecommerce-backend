@@ -14,6 +14,6 @@ class ProductImage extends Model
             return '';
         }
 
-        return asset('uploads/products/small/' . $this->image);
+        return asset('uploads/products/small/'.$this->image);
     }
 }

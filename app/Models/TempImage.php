@@ -10,10 +10,10 @@ class TempImage extends Model
 
     public function getImageUrlAttribute()
     {
-        if (!$this->name) {
-            return "";
+        if (! $this->name) {
+            return '';
         }
 
-        return asset('/uploads/temp/thumb/' . $this->name);
+        return asset('/uploads/temp/thumb/'.$this->name);
     }
 }

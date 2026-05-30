@@ -28,7 +28,7 @@ class TempImageController extends Controller
         $tempImage->save();
 
         $image = $request->file('image');
-        $imageName = time() . '.' . $image->extension();
+        $imageName = time().'.'.$image->extension();
         $image->move(public_path('uploads/temp'), $imageName);
 
         $tempImage->name = $imageName;
@@ -36,9 +36,10 @@ class TempImageController extends Controller
 
         $manager = new ImageManager(new Driver);
 
-        $image = $manager->read(public_path('uploads/temp/' . $imageName));
+        $image = $manager->read(public_path('uploads/temp/'.$imageName));
         $image->coverDown(400, 450);
-        $image->save(public_path('uploads/temp/thumb/' . $imageName));
+        $image->save(public_path('uploads/temp/thumb/'.$imageName));
+
         return response()->json([
             'status' => 201,
             'message' => 'Image has been uploaded successfully',

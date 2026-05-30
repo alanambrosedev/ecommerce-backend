@@ -71,7 +71,7 @@ class ProductController extends Controller
                     continue;
                 }
 
-                $path = public_path('uploads/temp/' . $tempImage->name);
+                $path = public_path('uploads/temp/'.$tempImage->name);
 
                 if (! file_exists($path)) {
                     continue;
@@ -79,22 +79,21 @@ class ProductController extends Controller
 
                 try {
                     $ext = pathinfo($tempImage->name, PATHINFO_EXTENSION);
-                    $imageName = $product->id . '-' . time() . '.' . $ext;
+                    $imageName = $product->id.'-'.time().'.'.$ext;
 
                     $manager = new ImageManager(new Driver);
 
                     // LARGE
                     $image = $manager->read($path);
                     $image->scaleDown(400, 460);
-                    $image->save(public_path('uploads/products/large/' . $imageName));
+                    $image->save(public_path('uploads/products/large/'.$imageName));
 
                     // SMALL
                     $image = $manager->read($path);
                     $image->coverDown(400, 460);
-                    $image->save(public_path('uploads/products/small/' . $imageName));
+                    $image->save(public_path('uploads/products/small/'.$imageName));
 
-
-                    $productImage = new ProductImage();
+                    $productImage = new ProductImage;
                     $productImage->image = $imageName;
                     $productImage->product_id = $product->id;
                     $productImage->save();
@@ -104,12 +103,13 @@ class ProductController extends Controller
                         $product->save();
                     }
                 } catch (\Exception $e) {
-                    \Log::error('Image processing failed: ' . $e->getMessage());
+                    \Log::error('Image processing failed: '.$e->getMessage());
 
                     continue;
                 }
             }
         }
+
         return response()->json([
             'status' => 201,
             'message' => 'Product created successfully.',
@@ -201,6 +201,47 @@ class ProductController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'Product deleted successfully.',
+        ]);
+    }
+
+    public function saveProductImages(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+
+        $image = $request->file('image');
+        $imageName = $request->product_id.'-'.time().'.'.$image->extension();
+        $image->move(public_path('uploads/temp'), $imageName);
+        $path = public_path('uploads/temp/'.$imageName);
+
+        $manager = new ImageManager(new Driver);
+
+        // LARGE
+        $image = $manager->read($path);
+        $image->scaleDown(400, 460);
+        $image->save(public_path('uploads/products/large/'.$imageName));
+
+        // SMALL
+        $image = $manager->read($path);
+        $image->coverDown(400, 460);
+        $image->save(public_path('uploads/products/small/'.$imageName));
+
+        $productImage = new ProductImage;
+        $productImage->image = $imageName;
+        $productImage->product_id = $request->product_id;
+        $productImage->save();
+
+        return response()->json([
+            'status' => 201,
+            'message' => 'Image has been uploaded successfully',
+            'image' => $productImage,
         ]);
     }
 }
