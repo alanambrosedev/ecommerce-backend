@@ -121,7 +121,7 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        $product = Product::find($id);
+        $product = Product::with('productImages')->find($id);
         if ($product == null) {
             return response()->json([
                 'status' => 404,

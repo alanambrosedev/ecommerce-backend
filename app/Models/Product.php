@@ -16,4 +16,9 @@ class Product extends Model
 
         return asset('uploads/products/small/' . $this->image);
     }
+
+    public function productImages()
+    {
+        return $this->hasMany(ProductImage::class);
+    }
 }
