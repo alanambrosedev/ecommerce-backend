@@ -71,7 +71,7 @@ class ProductController extends Controller
                     continue;
                 }
 
-                $path = public_path('uploads/temp/'.$tempImage->name);
+                $path = public_path('uploads/temp/' . $tempImage->name);
 
                 if (! file_exists($path)) {
                     continue;
@@ -79,19 +79,19 @@ class ProductController extends Controller
 
                 try {
                     $ext = pathinfo($tempImage->name, PATHINFO_EXTENSION);
-                    $imageName = $product->id.'-'.time().'.'.$ext;
+                    $imageName = $product->id . '-' . time() . '.' . $ext;
 
                     $manager = new ImageManager(new Driver);
 
                     // LARGE
                     $image = $manager->read($path);
                     $image->scaleDown(400, 460);
-                    $image->save(public_path('uploads/products/large/'.$imageName));
+                    $image->save(public_path('uploads/products/large/' . $imageName));
 
                     // SMALL
                     $image = $manager->read($path);
                     $image->coverDown(400, 460);
-                    $image->save(public_path('uploads/products/small/'.$imageName));
+                    $image->save(public_path('uploads/products/small/' . $imageName));
 
                     $productImage = new ProductImage;
                     $productImage->image = $imageName;
@@ -103,7 +103,7 @@ class ProductController extends Controller
                         $product->save();
                     }
                 } catch (\Exception $e) {
-                    \Log::error('Image processing failed: '.$e->getMessage());
+                    \Log::error('Image processing failed: ' . $e->getMessage());
 
                     continue;
                 }
@@ -217,21 +217,21 @@ class ProductController extends Controller
         }
 
         $image = $request->file('image');
-        $imageName = $request->product_id.'-'.time().'.'.$image->extension();
+        $imageName = $request->product_id . '-' . time() . '.' . $image->extension();
         $image->move(public_path('uploads/temp'), $imageName);
-        $path = public_path('uploads/temp/'.$imageName);
+        $path = public_path('uploads/temp/' . $imageName);
 
         $manager = new ImageManager(new Driver);
 
         // LARGE
         $image = $manager->read($path);
         $image->scaleDown(400, 460);
-        $image->save(public_path('uploads/products/large/'.$imageName));
+        $image->save(public_path('uploads/products/large/' . $imageName));
 
         // SMALL
         $image = $manager->read($path);
         $image->coverDown(400, 460);
-        $image->save(public_path('uploads/products/small/'.$imageName));
+        $image->save(public_path('uploads/products/small/' . $imageName));
 
         $productImage = new ProductImage;
         $productImage->image = $imageName;
@@ -243,5 +243,17 @@ class ProductController extends Controller
             'message' => 'Image has been uploaded successfully',
             'image' => $productImage,
         ]);
+    }
+
+    public function updateDefaultImage(Request $request)
+    {
+        $product = Product::find($request->product_id);
+        $product->image =  $request->image;
+        $product->save();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Product image changed successfully.'
+        ], 200);
     }
 }
