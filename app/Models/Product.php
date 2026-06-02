@@ -14,11 +14,16 @@ class Product extends Model
             return '';
         }
 
-        return asset('uploads/products/small/'.$this->image);
+        return asset('uploads/products/small/' . $this->image);
     }
 
     public function productImages()
     {
         return $this->hasMany(ProductImage::class);
+    }
+
+    public function productSizes()
+    {
+        return $this->hasMany(ProductSize::class);
     }
 }

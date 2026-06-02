@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductSize;
 use App\Models\TempImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -121,7 +122,7 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        $product = Product::with('productImages')->find($id);
+        $product = Product::with(['productImages', 'productSizes'])->find($id);
         if ($product == null) {
             return response()->json([
                 'status' => 404,
@@ -129,9 +130,11 @@ class ProductController extends Controller
             ]);
         }
 
+        $productSizes = $product->productSizes()->pluck('size_id');
         return response()->json([
             'status' => 200,
             'data' => $product,
+            'productSizes' => $productSizes
         ]);
     }
 
@@ -143,7 +146,7 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'price' => 'required|numeric',
-            'category_id' => 'required|numeric',
+            'category' => 'required|numeric',
             'sku' => ['required', Rule::unique('products', 'sku')->ignore($id)],
             'is_featured' => 'required',
             'qty' => 'required',
@@ -166,8 +169,8 @@ class ProductController extends Controller
         $product->title = $request->title;
         $product->price = $request->price;
         $product->compare_price = $request->compare_price;
-        $product->category_id = $request->category_id;
-        $product->brand_id = $request->brand_id;
+        $product->category_id = $request->category;
+        $product->brand_id = $request->brand;
         $product->sku = $request->sku;
         $product->description = $request->description;
         $product->short_description = $request->short_description;
@@ -176,6 +179,16 @@ class ProductController extends Controller
         $product->is_featured = $request->is_featured;
         $product->bar_code = $request->bar_code;
         $product->save();
+
+        if (!empty($request->sizes)) {
+            ProductSize::where('product_id', $product->id)->delete();
+            foreach ($request->sizes as $sizeId) {
+                $productSize = new ProductSize();
+                $productSize->size_id = $sizeId;
+                $productSize->product_id = $product->id;
+                $productSize->save();
+            }
+        }
 
         return response()->json([
             'status' => 200,
