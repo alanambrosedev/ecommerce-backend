@@ -18,4 +18,5 @@ Route::group(['middleware:auth:santum'], function () {
     Route::post('/temp-images', [TempImageController::class, 'store']);
     Route::post('/save-product-image', [ProductController::class, 'saveProductImages']);
     Route::post('/change-product-default-image', [ProductController::class, 'updateDefaultImage']);
+    Route::delete('/delete-product-image/{id}', [ProductController::class, 'deleteProductImage']);
 });
