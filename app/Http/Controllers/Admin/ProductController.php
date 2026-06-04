@@ -222,6 +222,15 @@ class ProductController extends Controller
             ]);
         }
 
+        if ($product->productImages()) {
+            foreach ($product->productImages() as $prodImage) {
+                File::delete(public_path('uploads/products/large/' . $prodImage->image));
+                File::delete(public_path('uploads/products/small/' . $prodImage->image));
+
+                $prodImage->delete();
+            }
+        }
+
         $product->delete();
 
         return response()->json([
