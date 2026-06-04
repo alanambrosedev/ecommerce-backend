@@ -5,6 +5,7 @@ use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\admin\TempImageController;
+use App\Http\Controllers\Front\ProductController as FrontProductController;
 use App\Http\Controllers\SizeController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +20,6 @@ Route::group(['middleware:auth:santum'], function () {
     Route::post('/save-product-image', [ProductController::class, 'saveProductImages']);
     Route::post('/change-product-default-image', [ProductController::class, 'updateDefaultImage']);
     Route::delete('/delete-product-image/{id}', [ProductController::class, 'deleteProductImage']);
+    Route::get('/latest-products', [FrontProductController::class, 'getLatestProducts']);
+    Route::get('/featured-products', [FrontProductController::class, 'getFeaturedProducts']);
 });
