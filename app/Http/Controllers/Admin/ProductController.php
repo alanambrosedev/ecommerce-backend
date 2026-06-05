@@ -73,7 +73,7 @@ class ProductController extends Controller
                     continue;
                 }
 
-                $path = public_path('uploads/temp/' . $tempImage->name);
+                $path = public_path('uploads/temp/'.$tempImage->name);
 
                 if (! file_exists($path)) {
                     continue;
@@ -82,19 +82,19 @@ class ProductController extends Controller
                 try {
                     $ext = pathinfo($tempImage->name, PATHINFO_EXTENSION);
                     $rand = rand(100000, 10000000);
-                    $imageName = $product->id . '-' . $rand . time() . '.' . $ext;
+                    $imageName = $product->id.'-'.$rand.time().'.'.$ext;
 
                     $manager = new ImageManager(new Driver);
 
                     // LARGE
                     $image = $manager->read($path);
                     $image->scaleDown(400, 460);
-                    $image->save(public_path('uploads/products/large/' . $imageName));
+                    $image->save(public_path('uploads/products/large/'.$imageName));
 
                     // SMALL
                     $image = $manager->read($path);
                     $image->coverDown(400, 460);
-                    $image->save(public_path('uploads/products/small/' . $imageName));
+                    $image->save(public_path('uploads/products/small/'.$imageName));
 
                     $productImage = new ProductImage;
                     $productImage->image = $imageName;
@@ -116,7 +116,7 @@ class ProductController extends Controller
                         $product->save();
                     }
                 } catch (\Exception $e) {
-                    \Log::error('Image processing failed: ' . $e->getMessage());
+                    \Log::error('Image processing failed: '.$e->getMessage());
 
                     continue;
                 }
@@ -224,8 +224,8 @@ class ProductController extends Controller
 
         if ($product->productImages()) {
             foreach ($product->productImages() as $prodImage) {
-                File::delete(public_path('uploads/products/large/' . $prodImage->image));
-                File::delete(public_path('uploads/products/small/' . $prodImage->image));
+                File::delete(public_path('uploads/products/large/'.$prodImage->image));
+                File::delete(public_path('uploads/products/small/'.$prodImage->image));
 
                 $prodImage->delete();
             }
@@ -253,21 +253,21 @@ class ProductController extends Controller
 
         $image = $request->file('image');
         $rand = rand(100000, 10000000);
-        $imageName = $request->product_id . '-' . $rand . time() . '.' . $image->extension();
+        $imageName = $request->product_id.'-'.$rand.time().'.'.$image->extension();
         $image->move(public_path('uploads/temp'), $imageName);
-        $path = public_path('uploads/temp/' . $imageName);
+        $path = public_path('uploads/temp/'.$imageName);
 
         $manager = new ImageManager(new Driver);
 
         // LARGE
         $image = $manager->read($path);
         $image->scaleDown(400, 460);
-        $image->save(public_path('fix(api): correct validation for product images upload' . $imageName));
+        $image->save(public_path('fix(api): correct validation for product images upload'.$imageName));
 
         // SMALL
         $image = $manager->read($path);
         $image->coverDown(400, 460);
-        $image->save(public_path('uploads/products/small/' . $imageName));
+        $image->save(public_path('uploads/products/small/'.$imageName));
 
         $productImage = new ProductImage;
         $productImage->image = $imageName;
@@ -300,18 +300,18 @@ class ProductController extends Controller
         if ($productImage == null) {
             return response()->json([
                 'status' => 404,
-                'message' => "Image not found",
+                'message' => 'Image not found',
             ], 404);
         }
 
-        File::delete(public_path('uploads/products/large/' . $productImage->image));
-        File::delete(public_path('uploads/products/small/' . $productImage->image));
+        File::delete(public_path('uploads/products/large/'.$productImage->image));
+        File::delete(public_path('uploads/products/small/'.$productImage->image));
 
         $productImage->delete();
 
         return response()->json([
             'status' => 200,
-            'message' => "Product image deleted successfully"
+            'message' => 'Product image deleted successfully',
         ], 200);
     }
 }
