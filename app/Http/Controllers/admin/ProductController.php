@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
@@ -242,7 +242,7 @@ class ProductController extends Controller
     public function saveProductImages(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -262,7 +262,7 @@ class ProductController extends Controller
         // LARGE
         $image = $manager->read($path);
         $image->scaleDown(400, 460);
-        $image->save(public_path('fix(api): correct validation for product images upload'.$imageName));
+        $image->save(public_path('uploads/products/large/'.$imageName));
 
         // SMALL
         $image = $manager->read($path);

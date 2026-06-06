@@ -3,9 +3,9 @@
 use App\Http\Controllers\admin\AuthController;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\CategoryController;
-use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\TempImageController;
-use App\Http\Controllers\Front\ProductController as FrontProductController;
+use App\Http\Controllers\front\ProductController as FrontProductController;
 use App\Http\Controllers\SizeController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,4 +22,7 @@ Route::group(['middleware:auth:santum'], function () {
     Route::delete('/delete-product-image/{id}', [ProductController::class, 'deleteProductImage']);
     Route::get('/latest-products', [FrontProductController::class, 'getLatestProducts']);
     Route::get('/featured-products', [FrontProductController::class, 'getFeaturedProducts']);
+    Route::get('/get-products', [FrontProductController::class, 'getProducts']);
+    Route::get('/get-brands', [FrontProductController::class, 'getBrands']);
+    Route::get('/get-categories', [FrontProductController::class, 'getCategories']);
 });
