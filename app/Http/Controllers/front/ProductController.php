@@ -57,8 +57,8 @@ class ProductController extends Controller
         if ($request->category) {
             $query->whereIn('category_id', explode(',', $request->category));
         }
-        if ($request->brands) {
-            $query->whereIn('brand_id', explode(',', $request->brands));
+        if ($request->brand) {
+            $query->whereIn('brand_id', explode(',', $request->brand));
         }
 
         $products = $query->get();
