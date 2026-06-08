@@ -25,4 +25,5 @@ Route::group(['middleware:auth:santum'], function () {
     Route::get('/get-products', [FrontProductController::class, 'getProducts']);
     Route::get('/get-brands', [FrontProductController::class, 'getBrands']);
     Route::get('/get-categories', [FrontProductController::class, 'getCategories']);
+    Route::get('/get-product/{id}', [FrontProductController::class, 'getProductDetails']);
 });
