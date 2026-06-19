@@ -76,13 +76,13 @@ class ProductController extends Controller
         if ($productDetails == null) {
             return response()->json([
                 'status' => 404,
-                'message' => "Product not found."
+                'message' => 'Product not found.',
             ]);
         }
 
         return response()->json([
             'status' => 200,
-            'data' => $productDetails
+            'data' => $productDetails,
         ]);
     }
 }
