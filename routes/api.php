@@ -15,8 +15,7 @@ Route::post('/admin/login', [AuthController::class, 'authenticate']);
 Route::post('/register', [AccountController::class, 'register']);
 Route::post('/authenticate', [AccountController::class, 'authenticate']);
 
-Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::post('/save-order', [OrderController::class, 'saveOrder']);
+Route::group(['middleware' => ['auth:sanctum', 'checkAdminRole']], function () {
     Route::resource('/categories', CategoryController::class);
     Route::resource('/brands', BrandController::class);
     Route::get('/sizes', [SizeController::class, 'index']);
@@ -31,4 +30,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/get-brands', [FrontProductController::class, 'getBrands']);
     Route::get('/get-categories', [FrontProductController::class, 'getCategories']);
     Route::get('/get-product/{id}', [FrontProductController::class, 'getProductDetails']);
+});
+Route::group(['middleware' => ['auth:sanctum', 'checkUserRole']], function () {
+    Route::post('/save-order', [OrderController::class, 'saveOrder']);
 });
