@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\User;
-use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Laravel\Sanctum\Sanctum;
 
 uses(DatabaseTransactions::class);
 
