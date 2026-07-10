@@ -6,11 +6,34 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
     public function saveOrder(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required',
+            'address' => 'required',
+            'state' => 'required',
+            'mobile' => 'required',
+            'zip' => 'required',
+            'city' => 'required',
+            'grand_total' => 'required',
+            'sub_total' => 'required',
+            'discount' => 'required',
+            'shipping' => 'required',
+            'payment_status' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->errors(),
+            ]);
+        }
+
         if (! empty($request->cart)) {
             $order = new Order;
             $order->name = $request->name;
