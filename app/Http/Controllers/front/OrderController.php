@@ -56,7 +56,7 @@ class OrderController extends Controller
 
                 $orderItem = new OrderItem;
                 $orderItem->order_id = $order->id;
-                $orderItem->name = $val['name'];
+                $orderItem->name = $val['title'];
                 $orderItem->unit_price = $val['price'];
                 $orderItem->qty = $val['qty'];
                 $orderItem->product_id = $val['product_id'];
