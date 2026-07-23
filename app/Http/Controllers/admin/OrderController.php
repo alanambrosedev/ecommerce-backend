@@ -22,6 +22,14 @@ class OrderController extends Controller
     {
         $order = Order::with('items')->find($id);
 
+        if ($order == null) {
+            return response()->json([
+                'data' => [],
+                'message' => "order not found.",
+                'status' => 404
+            ], 404);
+        }
+
         return response()->json([
             'status' => 200,
             'data' => $order,
