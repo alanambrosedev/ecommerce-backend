@@ -25,8 +25,8 @@ class OrderController extends Controller
         if ($order == null) {
             return response()->json([
                 'data' => [],
-                'message' => "order not found.",
-                'status' => 404
+                'message' => 'Order not found.',
+                'status' => 404,
             ], 404);
         }
 
