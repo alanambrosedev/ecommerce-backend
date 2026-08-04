@@ -81,7 +81,7 @@ class OrderController extends Controller
     public function getOrderDetails($id)
     {
 
-        $order = Order::with('items', 'items.product')->where([
+        $order = Order::with('items')->where([
             'user_id' => auth()->id(),
             'id' => $id,
         ])->first();

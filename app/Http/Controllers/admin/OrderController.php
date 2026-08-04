@@ -20,7 +20,7 @@ class OrderController extends Controller
 
     public function show($id)
     {
-        $order = Order::with('items')->find($id);
+        $order = Order::with('items', 'items.product')->find($id);
 
         if ($order == null) {
             return response()->json([
