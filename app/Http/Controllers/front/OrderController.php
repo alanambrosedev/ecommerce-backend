@@ -80,11 +80,11 @@ class OrderController extends Controller
 
     public function getOrderDetails($id)
     {
-        $order = Order::with('items')->where([
+
+        $order = Order::with('items', 'items.product')->where([
             'user_id' => auth()->id(),
             'id' => $id,
         ])->first();
-
         if ($order == null) {
             return response()->json([
                 'status' => 404,
