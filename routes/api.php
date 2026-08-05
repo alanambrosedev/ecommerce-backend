@@ -33,8 +33,9 @@ Route::group(['middleware' => ['auth:sanctum', 'checkAdminRole']], function () {
     Route::get('/get-product/{id}', [FrontProductController::class, 'getProductDetails']);
     Route::get('/orders', [AdminOrderController::class, 'index']);
     Route::get('/orders/{id}', [AdminOrderController::class, 'show']);
+    Route::get('/order-details/{id}', [AdminOrderController::class, 'getOrderDetails']);
+    Route::post('/update-order/{id}', [AdminOrderController::class, 'updateOrder']);
 });
 Route::group(['middleware' => ['auth:sanctum', 'checkUserRole']], function () {
     Route::post('/save-order', [OrderController::class, 'saveOrder']);
-    Route::get('/order-details/{id}', [OrderController::class, 'getOrderDetails']);
 });

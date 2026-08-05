@@ -77,25 +77,4 @@ class OrderController extends Controller
             ], 400);
         }
     }
-
-    public function getOrderDetails($id)
-    {
-
-        $order = Order::with('items')->where([
-            'user_id' => auth()->id(),
-            'id' => $id,
-        ])->first();
-        if ($order == null) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Order not found.',
-                'data' => [],
-            ], 404);
-        } else {
-            return response()->json([
-                'status' => 200,
-                'data' => $order,
-            ], 200);
-        }
-    }
 }
