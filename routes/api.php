@@ -16,6 +16,13 @@ Route::post('/admin/login', [AuthController::class, 'authenticate']);
 Route::post('/register', [AccountController::class, 'register']);
 Route::post('/authenticate', [AccountController::class, 'authenticate']);
 
+Route::get('/latest-products', [FrontProductController::class, 'getLatestProducts']);
+Route::get('/featured-products', [FrontProductController::class, 'getFeaturedProducts']);
+Route::get('/get-products', [FrontProductController::class, 'getProducts']);
+Route::get('/get-brands', [FrontProductController::class, 'getBrands']);
+Route::get('/get-categories', [FrontProductController::class, 'getCategories']);
+Route::get('/get-product/{id}', [FrontProductController::class, 'getProductDetails']);
+
 Route::group(['middleware' => ['auth:sanctum', 'checkAdminRole']], function () {
     Route::resource('/categories', CategoryController::class);
     Route::resource('/brands', BrandController::class);
@@ -25,17 +32,11 @@ Route::group(['middleware' => ['auth:sanctum', 'checkAdminRole']], function () {
     Route::post('/save-product-image', [ProductController::class, 'saveProductImages']);
     Route::post('/change-product-default-image', [ProductController::class, 'updateDefaultImage']);
     Route::delete('/delete-product-image/{id}', [ProductController::class, 'deleteProductImage']);
-    Route::get('/latest-products', [FrontProductController::class, 'getLatestProducts']);
-    Route::get('/featured-products', [FrontProductController::class, 'getFeaturedProducts']);
-    Route::get('/get-products', [FrontProductController::class, 'getProducts']);
-    Route::get('/get-brands', [FrontProductController::class, 'getBrands']);
-    Route::get('/get-categories', [FrontProductController::class, 'getCategories']);
-    Route::get('/get-product/{id}', [FrontProductController::class, 'getProductDetails']);
     Route::get('/orders', [AdminOrderController::class, 'index']);
     Route::get('/orders/{id}', [AdminOrderController::class, 'show']);
-    Route::get('/order-details/{id}', [AdminOrderController::class, 'getOrderDetails']);
     Route::post('/update-order/{id}', [AdminOrderController::class, 'updateOrder']);
 });
 Route::group(['middleware' => ['auth:sanctum', 'checkUserRole']], function () {
     Route::post('/save-order', [OrderController::class, 'saveOrder']);
+    Route::get('/order-details/{id}', [AdminOrderController::class, 'getOrderDetails']);
 });

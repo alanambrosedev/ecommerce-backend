@@ -38,6 +38,7 @@ class TempImageController extends Controller
 
         $image = $manager->read(public_path('uploads/temp/'.$imageName));
         $image->coverDown(400, 450);
+        \Illuminate\Support\Facades\File::ensureDirectoryExists(public_path('uploads/temp/thumb'));
         $image->save(public_path('uploads/temp/thumb/'.$imageName));
 
         return response()->json([

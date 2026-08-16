@@ -56,6 +56,14 @@ class AccountController extends Controller
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = User::find(Auth::user()->id);
 
+            if ($user->role !== 'customer') {
+                Auth::logout();
+                return response()->json([
+                    'status' => 401,
+                    'message' => 'Unauthorized access.',
+                ]);
+            }
+
             $token = $user->createToken('token')->plainTextToken;
 
             return response()->json([
