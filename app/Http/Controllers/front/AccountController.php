@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\front;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -58,6 +59,7 @@ class AccountController extends Controller
 
             if ($user->role !== 'customer') {
                 Auth::logout();
+
                 return response()->json([
                     'status' => 401,
                     'message' => 'Unauthorized access.',
@@ -78,5 +80,15 @@ class AccountController extends Controller
                 'message' => 'Invalid credentials.',
             ]);
         }
+    }
+
+    public function getOrders(Request $request)
+    {
+        $orders = Order::where('user_id', $request->user()->id)->get();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $orders,
+        ]);
     }
 }

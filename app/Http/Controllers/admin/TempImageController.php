@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\TempImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -38,7 +39,7 @@ class TempImageController extends Controller
 
         $image = $manager->read(public_path('uploads/temp/'.$imageName));
         $image->coverDown(400, 450);
-        \Illuminate\Support\Facades\File::ensureDirectoryExists(public_path('uploads/temp/thumb'));
+        File::ensureDirectoryExists(public_path('uploads/temp/thumb'));
         $image->save(public_path('uploads/temp/thumb/'.$imageName));
 
         return response()->json([

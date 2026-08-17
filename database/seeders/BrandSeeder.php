@@ -24,7 +24,7 @@ class BrandSeeder extends Seeder
 
         foreach ($brands as $name) {
             Brand::create([
-                'name'   => $name,
+                'name' => $name,
                 'status' => 1,
             ]);
         }

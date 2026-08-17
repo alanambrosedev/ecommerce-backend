@@ -18,18 +18,18 @@ class DatabaseSeeder extends Seeder
     {
         // Admin user
         User::factory()->create([
-            'name'     => 'Admin',
-            'email'    => 'admin@example.com',
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
             'password' => Hash::make('password'),
-            'role'     => 'admin',
+            'role' => 'admin',
         ]);
 
         // Sample customer
         User::factory()->create([
-            'name'     => 'Customer',
-            'email'    => 'customer@example.com',
+            'name' => 'Customer',
+            'email' => 'customer@example.com',
             'password' => Hash::make('password'),
-            'role'     => 'customer',
+            'role' => 'customer',
         ]);
 
         $this->call([SizeSeeder::class, BrandSeeder::class, CategorySeeder::class]);
