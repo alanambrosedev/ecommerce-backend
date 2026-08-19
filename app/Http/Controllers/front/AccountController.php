@@ -91,4 +91,26 @@ class AccountController extends Controller
             'data' => $orders,
         ]);
     }
+
+    public function getOrderDetails($id, Request $request)
+    {
+        $order = Order::with('items', 'items.product')->where([
+            'user_id' => $request->user()->id,
+            'id' => $id,
+        ])->first();
+
+        if ($order == null) {
+            return response()->json([
+                'data' => [],
+                'message' => 'Order not found.',
+                'status' => 404,
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data' => $order,
+
+        ], 200);
+    }
 }
