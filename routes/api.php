@@ -5,6 +5,7 @@ use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\OrderController as AdminOrderController;
 use App\Http\Controllers\admin\ProductController;
+use App\Http\Controllers\admin\ShippingController;
 use App\Http\Controllers\admin\TempImageController;
 use App\Http\Controllers\front\AccountController;
 use App\Http\Controllers\front\OrderController;
@@ -35,7 +36,8 @@ Route::group(['middleware' => ['auth:sanctum', 'checkAdminRole']], function () {
     Route::get('/orders', [AdminOrderController::class, 'index']);
     Route::get('/orders/{id}', [AdminOrderController::class, 'show']);
     Route::post('/update-order/{id}', [AdminOrderController::class, 'updateOrder']);
-
+    Route::get('/get-shipping', [ShippingController::class, 'getShipping']);
+    Route::post('/shipping', [ShippingController::class, 'updateShipping']);
 });
 Route::group(['middleware' => ['auth:sanctum', 'checkUserRole']], function () {
     Route::post('/save-order', [OrderController::class, 'saveOrder']);
