@@ -4,7 +4,6 @@ namespace App\Http\Controllers\front;
 
 use App\Http\Controllers\Controller;
 use App\Models\ShippingCharge;
-use Illuminate\Http\Request;
 
 class ShippingController extends Controller
 {
@@ -14,7 +13,7 @@ class ShippingController extends Controller
 
         return response()->json([
             'status' => 200,
-            'data' => $shipping
+            'data' => $shipping,
         ]);
     }
 }

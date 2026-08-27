@@ -27,7 +27,6 @@ Route::get('/get-product/{id}', [FrontProductController::class, 'getProductDetai
 Route::get('/get-product/{id}', [FrontProductController::class, 'getProductDetails']);
 Route::get('/shipping', [FrontShippingController::class, 'getShipping']);
 
-
 Route::group(['middleware' => ['auth:sanctum', 'checkAdminRole']], function () {
     Route::resource('/categories', CategoryController::class);
     Route::resource('/brands', BrandController::class);
