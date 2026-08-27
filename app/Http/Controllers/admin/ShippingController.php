@@ -31,16 +31,9 @@ class ShippingController extends Controller
             ], 400);
         }
 
-        $shipping = ShippingCharge::first();
-
-        if ($shipping == null) {
-            $model = new ShippingCharge;
-            $model->shipping_charge = $request->shipping_charge;
-            $model->save();
-        } else {
-            $shipping->shipping_charge = $request->shipping_charge;
-            $shipping->save();
-        }
+        ShippingCharge::updateOrInsert(['id' => 1], [
+            'shipping_charge' => $request->shipping_charge,
+        ]);
 
         return response()->json([
             'status' => 200,

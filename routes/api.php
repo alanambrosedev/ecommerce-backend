@@ -10,6 +10,7 @@ use App\Http\Controllers\admin\TempImageController;
 use App\Http\Controllers\front\AccountController;
 use App\Http\Controllers\front\OrderController;
 use App\Http\Controllers\front\ProductController as FrontProductController;
+use App\Http\Controllers\front\ShippingController as FrontShippingController;
 use App\Http\Controllers\SizeController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,9 @@ Route::get('/get-products', [FrontProductController::class, 'getProducts']);
 Route::get('/get-brands', [FrontProductController::class, 'getBrands']);
 Route::get('/get-categories', [FrontProductController::class, 'getCategories']);
 Route::get('/get-product/{id}', [FrontProductController::class, 'getProductDetails']);
+Route::get('/get-product/{id}', [FrontProductController::class, 'getProductDetails']);
+Route::get('/shipping', [FrontShippingController::class, 'getShipping']);
+
 
 Route::group(['middleware' => ['auth:sanctum', 'checkAdminRole']], function () {
     Route::resource('/categories', CategoryController::class);
