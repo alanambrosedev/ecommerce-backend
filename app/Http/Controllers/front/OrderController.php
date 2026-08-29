@@ -105,6 +105,10 @@ class OrderController extends Controller
                 ], 400);
             }
         } catch (Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
 }
