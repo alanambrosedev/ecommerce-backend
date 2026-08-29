@@ -5,8 +5,11 @@ namespace App\Http\Controllers\front;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Stripe\PaymentIntent;
+use Stripe\Stripe;
 
 class OrderController extends Controller
 {
@@ -75,6 +78,33 @@ class OrderController extends Controller
                 'status' => 400,
                 'message' => 'Cart is empty.',
             ], 400);
+        }
+    }
+
+    public function createPaymentIntent(Request $request)
+    {
+        try {
+            if ($request->amount > 0) {
+                Stripe::setApiKey(env('STRIPE_PRIVATE_KEY'));
+                $paymentIntent = PaymentIntent::create([
+                    'amount' => $request->amount,
+                    'currency' => 'USD',
+                    'payment_method_types' => ['card'],
+                ]);
+
+                $clientSecret = $paymentIntent->client_secret;
+
+                return response()->json([
+                    'status' => 200,
+                    'token' => $clientSecret,
+                ], 200);
+            } else {
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Amount must be greater than 0',
+                ], 400);
+            }
+        } catch (Exception $e) {
         }
     }
 }
