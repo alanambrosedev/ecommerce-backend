@@ -51,6 +51,7 @@ class OrderController extends Controller
             $order->discount = $request->discount;
             $order->shipping = $request->shipping;
             $order->payment_status = $request->payment_status;
+            $order->payment_method = $request->payment_method;
             $order->status = $request->status;
             $order->user_id = auth()->id();
             $order->save();
@@ -85,10 +86,23 @@ class OrderController extends Controller
     {
         try {
             if ($request->amount > 0) {
-                Stripe::setApiKey(env('STRIPE_PRIVATE_KEY'));
+                Stripe::setApiKey(config('services.stripe.secret') ?? env('STRIPE_PRIVATE_KEY'));
+                $shipping = [
+                    'name' => $request->name ?? auth()->user()->name ?? 'Customer Name',
+                    'address' => [
+                        'line1' => $request->address ?? 'Default Street Address',
+                        'city' => $request->city ?? 'City',
+                        'state' => $request->state ?? 'State',
+                        'postal_code' => $request->zip ?? '10001',
+                        'country' => $request->country ?? 'IN',
+                    ],
+                ];
+
                 $paymentIntent = PaymentIntent::create([
                     'amount' => $request->amount,
-                    'currency' => 'USD',
+                    'currency' => 'usd',
+                    'description' => $request->description ?? 'E-Commerce Product Purchase',
+                    'shipping' => $shipping,
                     'payment_method_types' => ['card'],
                 ]);
 
@@ -96,7 +110,7 @@ class OrderController extends Controller
 
                 return response()->json([
                     'status' => 200,
-                    'token' => $clientSecret,
+                    'clientSecret' => $clientSecret,
                 ], 200);
             } else {
                 return response()->json([
