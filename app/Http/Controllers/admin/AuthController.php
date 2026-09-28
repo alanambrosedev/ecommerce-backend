@@ -3,50 +3,42 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
-    public function authenticate(Request $request)
+    public function authenticate(LoginRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
 
-        if ($validator->fails()) {
+        if (! Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
-                'status' => 400,
-                'errors' => $validator->errors(),
-            ]);
+                'message' => 'Invalid email or password.',
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = User::find(Auth::user()->id);
+        $user = Auth::user();
 
-            if ($user->role == 'admin') {
-                $token = $user->createToken('token')->plainTextToken;
+        if ($user->role !== 'admin') {
+            Auth::logout();
 
-                return response()->json([
-                    'status' => 200,
-                    'token' => $token,
-                    'id' => $user->id,
-                    'name' => $user->name,
-                ]);
-            } else {
-                return response()->json([
-                    'status' => 401,
-                    'message' => 'UnAuthorised access.',
-                ]);
-            }
-        } else {
             return response()->json([
-                'status' => 401,
-                'message' => 'Invalid credentials.',
-            ]);
+                'message' => 'Unauthorized access.',
+            ], Response::HTTP_FORBIDDEN);
         }
+
+        $user->tokens()->delete();
+        $token = $user->createToken('admin-auth-token')->plainTextToken;
+
+        return response()->json([
+            'token' => $token,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ],
+        ], Response::HTTP_OK);
     }
 }

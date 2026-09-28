@@ -4,6 +4,7 @@ namespace App\Http\Controllers\front;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AccountRequest;
+use App\Http\Requests\LoginRequest;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -27,46 +28,37 @@ class AccountController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    public function authenticate(Request $request)
+    public function authenticate(LoginRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
 
-        if ($validator->fails()) {
+        if (! Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
-                'status' => 400,
-                'errors' => $validator->errors(),
-            ]);
+                'message' => 'Invalid email or password.',
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = User::find(Auth::user()->id);
+        $user = Auth::user();
 
-            if ($user->role !== 'customer') {
-                Auth::logout();
-
-                return response()->json([
-                    'status' => 401,
-                    'message' => 'Unauthorized access.',
-                ]);
-            }
-
-            $token = $user->createToken('token')->plainTextToken;
+        if ($user->role !== 'customer') {
+            Auth::logout();
 
             return response()->json([
-                'status' => 200,
-                'token' => $token,
+                'message' => 'Unauthorized access.',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $user->tokens()->delete();
+        $token = $user->createToken('customer-auth-token')->plainTextToken;
+
+        return response()->json([
+            'token' => $token,
+            'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
-            ]);
-        } else {
-            return response()->json([
-                'status' => 401,
-                'message' => 'Invalid credentials.',
-            ]);
-        }
+                'email' => $user->email,
+                'role' => $user->role,
+            ],
+        ], 200);
     }
 
     public function getOrders(Request $request)
