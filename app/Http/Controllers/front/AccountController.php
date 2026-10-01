@@ -7,13 +7,15 @@ use App\Http\Requests\AccountRequest;
 use App\Http\Requests\LoginRequest;
 use App\Models\Order;
 use App\Models\User;
+use App\Services\AuthService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
 class AccountController extends Controller
 {
+    public function __construct(private readonly AuthService $authService) {}
+
     public function register(AccountRequest $request)
     {
         $user = User::create([...$request->validated(), 'role' => 'customer']);
@@ -31,34 +33,9 @@ class AccountController extends Controller
     public function authenticate(LoginRequest $request)
     {
 
-        if (! Auth::attempt($request->only('email', 'password'))) {
-            return response()->json([
-                'message' => 'Invalid email or password.',
-            ], Response::HTTP_UNAUTHORIZED);
-        }
+        $result = $this->authService->authenticate($request->only('email', 'password'), 'customer', 'customer-auth-token');
 
-        $user = Auth::user();
-
-        if ($user->role !== 'customer') {
-            Auth::logout();
-
-            return response()->json([
-                'message' => 'Unauthorized access.',
-            ], Response::HTTP_FORBIDDEN);
-        }
-
-        $user->tokens()->delete();
-        $token = $user->createToken('customer-auth-token')->plainTextToken;
-
-        return response()->json([
-            'token' => $token,
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'role' => $user->role,
-            ],
-        ], 200);
+        return response()->json($result['data'], $result['status']);
     }
 
     public function getOrders(Request $request)
@@ -117,7 +94,7 @@ class AccountController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => 400,
+                'status' => 422,
                 'errors' => $validator->errors(),
             ]);
         }
