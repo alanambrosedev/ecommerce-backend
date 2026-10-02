@@ -13,6 +13,7 @@ class AuthController extends Controller
     public function authenticate(LoginRequest $request)
     {
         $result = $this->authService->authenticate($request->only('email', 'password'), 'admin', 'admin-auth-token');
+
         return response()->json(
             $result['data'],
             $result['status'],
