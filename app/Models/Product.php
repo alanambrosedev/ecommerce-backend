@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
@@ -15,7 +14,7 @@ class Product extends Model
             return '';
         }
 
-        return asset('uploads/products/small/' . $this->image);
+        return asset('uploads/products/small/'.$this->image);
     }
 
     public function category()
